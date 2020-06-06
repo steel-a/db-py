@@ -26,7 +26,7 @@ class DB:
         else:
             raise Exception("More than one result exception with query: ["+query+"]")
 
-    def getRow(self, query) -> dict:
+    def getRowDic(self, query) -> dict:
         cursor = self.cnx.cursor()
         cursor.execute(query)
         
@@ -41,6 +41,24 @@ class DB:
             return dic
         else:
             raise Exception("More than one result exception with query: ["+query+"]")
+
+
+    def getListRowsDic(self, query) -> list:
+        cursor = self.cnx.cursor()
+        cursor.execute(query)
+        
+        columnNames = cursor.column_names
+        if(cursor.rowcount<1):
+            return None
+
+        lst = list()
+        for record in cursor:
+            dic = dict()
+            for i in range(0,len(columnNames)):
+                dic[columnNames[i]] = record[i]
+            lst.append(dic)
+        return lst
+
 
     def exec(self, query):
         cursor = self.cnx.cursor()
