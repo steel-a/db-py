@@ -14,7 +14,7 @@ class DB:
     def __del__(self):
         self.cnx.close()
 
-    def getValue(self, query) -> str:
+    def getValue(self, query):
         cursor = self.cnx.cursor()
         cursor.execute(query)
         
@@ -48,16 +48,36 @@ class DB:
         cursor.execute(query)
         
         columnNames = cursor.column_names
-        if(cursor.rowcount<1):
-            return None
 
         lst = list()
-        for record in cursor:
+        for record in cursor.fetchall():
             dic = dict()
             for i in range(0,len(columnNames)):
                 dic[columnNames[i]] = record[i]
             lst.append(dic)
         return lst
+
+
+    def getDicRowsList(self, query) -> dict:
+        cursor = self.cnx.cursor()
+        cursor.execute(query)
+        
+        columnNames = cursor.column_names
+        dic = dict()
+        for i in range(0,len(columnNames)):
+            dic[columnNames[i]] = list()
+
+        for record in cursor.fetchall():
+            for i in range(0,len(columnNames)):
+                dic[columnNames[i]].append(record[i])
+
+        return dic
+
+
+    def fetchall(self, query) -> list:
+        cursor = self.cnx.cursor()
+        cursor.execute(query)
+        return cursor.fetchall()
 
 
     def exec(self, query):
