@@ -14,7 +14,7 @@ class DB:
     def __del__(self):
         self.cnx.close()
 
-    def getValue(self, query):
+    def getValue(self, query:str):
         cursor = self.cnx.cursor()
         cursor.execute(query)
         
@@ -26,7 +26,7 @@ class DB:
         else:
             raise Exception("More than one result exception with query: ["+query+"]")
 
-    def getRowDic(self, query) -> dict:
+    def getRowDic(self, query:str) -> dict:
         cursor = self.cnx.cursor()
         cursor.execute(query)
         
@@ -43,7 +43,7 @@ class DB:
             raise Exception("More than one result exception with query: ["+query+"]")
 
 
-    def getListRowsDic(self, query) -> list:
+    def getListRowsDic(self, query:str) -> list:
         cursor = self.cnx.cursor()
         cursor.execute(query)
         
@@ -58,7 +58,7 @@ class DB:
         return lst
 
 
-    def getDicRowsList(self, query) -> dict:
+    def getDicRowsList(self, query:str) -> dict:
         cursor = self.cnx.cursor()
         cursor.execute(query)
         
@@ -74,15 +74,16 @@ class DB:
         return dic
 
 
-    def fetchall(self, query) -> list:
+    def fetchall(self, query:str) -> list:
         cursor = self.cnx.cursor()
         cursor.execute(query)
         return cursor.fetchall()
 
 
-    def exec(self, query):
+    def exec(self, query:str) -> int:
         cursor = self.cnx.cursor()
         cursor.execute(query)
+        return cursor.rowcount
 
     def startTransaction(self):
         self.exec("SET autocommit = OFF")
