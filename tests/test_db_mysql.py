@@ -1,33 +1,38 @@
+from dbpy.tests.data import getConnStr
 from dbpy.db_mysql import DB
 from utilpy.config import Config
+import pandas as pd
 
-db = DB(Config('getWebData.ini').config['connectionString'])
-db.exec('drop table if exists test')
-db.exec('create table test (a int, b varchar(10))')
-db.exec('insert into test values (1,"aaa")')
-db.exec('insert into test values (2,"bbb")')
+with DB(getConnStr()) as db: # Using transaction
 
-assert db.getValue('select b from test where a = 1') == 'aaa'
-assert db.getValue('select a from test where a = 1') == 1
+    #db = DB(Config('getWebData.ini').item['connectionString']) # Not using transaction
+    db.exec('drop table if exists test')
+    db.exec('create table test (a int, b varchar(10))')
+    db.exec('insert into test values (1,"aaa")')
+    db.exec('insert into test values (2,"bbb")')
 
-dic = db.getRowDic('select * from test where a=1')
-assert dic['a']==1
-assert dic['b']=='aaa'
+    assert db.getValue('select b from test where a = 1') == 'aaa'
+    assert db.getValue('select a from test where a = 1') == 1
 
-lst = db.getListRowsDic('select * from test')
-assert lst[0]['a']==1
-assert lst[0]['b']=='aaa'
-assert lst[1]['a']==2
-assert lst[1]['b']=='bbb'
+    dic = db.getRow('select * from test where a=1')
+    assert dic['a']==1
+    assert dic['b']=='aaa'
 
-dic = db.getDicRowsList('select * from test')
-assert dic['a'][0]==1
-assert dic['a'][1]==2
-assert dic['b'][0]=='aaa'
-assert dic['b'][1]=='bbb'
+    lst = db.getListRows('select * from test')
+    assert lst[0]['a']==1
+    assert lst[0]['b']=='aaa'
+    assert lst[1]['a']==2
+    assert lst[1]['b']=='bbb'
 
-lst = db.fetchall('select * from test')
-assert lst[0][0]==1
-assert lst[0][1]=='aaa'
-assert lst[1][0]==2
-assert lst[1][1]=='bbb'
+    dic = db.getRowLists('select * from test')
+    assert dic['a'][0]==1
+    assert dic['a'][1]==2
+    assert dic['b'][0]=='aaa'
+    assert dic['b'][1]=='bbb'
+
+    lst = db.fetchall('select * from test')
+    assert lst[0][0]==1
+    assert lst[0][1]=='aaa'
+    assert lst[1][0]==2
+    assert lst[1][1]=='bbb'
+

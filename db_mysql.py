@@ -8,14 +8,31 @@ class DB:
         for m in re.findall(r'[ \t]*([a-zA-Z0-9-]*)[ \t]*=[ \t]*\'([a-zA-Z0-9-+*\/=?!@#$%&()_{}<>:;.~^`" ]*)\'[ \t]*',connString):
             dic[m[0]] = m[1]
 
-        self.cnx = mysql.connector.connect(**dic)
+        self.conn = mysql.connector.connect(**dic)
         self.exec("SET autocommit = ON")
 
+
     def __del__(self):
-        self.cnx.close()
+        self.conn.close()
+
+
+    def __enter__(self):
+        self.startTransaction()
+        return self
+
+
+    def __exit__(self, type, value, tb):
+        if tb is None:
+            self.endTransaction()
+            self.conn.close()
+        else:
+            self.rollback()
+            self.conn.close()
+            return False
+
 
     def getValue(self, query:str):
-        cursor = self.cnx.cursor()
+        cursor = self.conn.cursor()
         cursor.execute(query)
         
         record = cursor.fetchone()
@@ -26,8 +43,9 @@ class DB:
         else:
             raise Exception("More than one result exception with query: ["+query+"]")
 
-    def getRowDic(self, query:str) -> dict:
-        cursor = self.cnx.cursor()
+
+    def getRow(self, query:str) -> dict:
+        cursor = self.conn.cursor()
         cursor.execute(query)
         
         record = cursor.fetchone()
@@ -43,8 +61,8 @@ class DB:
             raise Exception("More than one result exception with query: ["+query+"]")
 
 
-    def getListRowsDic(self, query:str) -> list:
-        cursor = self.cnx.cursor()
+    def getListRows(self, query:str) -> list:
+        cursor = self.conn.cursor()
         cursor.execute(query)
         
         columnNames = cursor.column_names
@@ -58,8 +76,8 @@ class DB:
         return lst
 
 
-    def getDicRowsList(self, query:str) -> dict:
-        cursor = self.cnx.cursor()
+    def getRowLists(self, query:str) -> dict:
+        cursor = self.conn.cursor()
         cursor.execute(query)
         
         columnNames = cursor.column_names
@@ -75,29 +93,38 @@ class DB:
 
 
     def fetchall(self, query:str) -> list:
-        cursor = self.cnx.cursor()
+        cursor = self.conn.cursor()
         cursor.execute(query)
         return cursor.fetchall()
 
 
     def exec(self, query:str) -> int:
-        cursor = self.cnx.cursor()
+        cursor = self.conn.cursor()
         cursor.execute(query)
         return cursor.rowcount
+
 
     def startTransaction(self):
         self.exec("SET autocommit = OFF")
         self.exec("START TRANSACTION")
 
+
     def endTransaction(self):
         self.exec("COMMIT")
         self.exec("SET autocommit = ON")
+
 
     def rollback(self):
         try:
             self.exec("ROLLBACK")
             self.exec("SET autocommit = ON")
         except: pass
+
+
+    def reconnect(self):
+        if not self.conn.is_connected():
+            self.conn.reconnect()
+
 
 def f(val):
     if val is None: return 'null'
