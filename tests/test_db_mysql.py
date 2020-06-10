@@ -1,12 +1,10 @@
-from dbpy.tests.data import getConnStr
+from dbpy.tests.config import getConnStr
 from dbpy.db_mysql import DB
-from utilpy.config import Config
 import pandas as pd
 
 def test_db_mysql():
     with DB(getConnStr()) as db: # Using transaction
 
-        #db = DB(Config('getWebData.ini').item['connectionString']) # Not using transaction
         db.exec('drop table if exists test')
         db.exec('create table test (a int, b varchar(10))')
         db.exec('insert into test values (1,"aaa")')
@@ -37,3 +35,6 @@ def test_db_mysql():
         assert lst[1][0]==2
         assert lst[1][1]=='bbb'
 
+
+if __name__ == '__main__':
+    test_db_mysql()
