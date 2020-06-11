@@ -1,6 +1,5 @@
 from dbpy.tests.config import getConnStr
 from dbpy.db_mysql import DB
-import pandas as pd
 
 def test_db_mysql():
     with DB(getConnStr()) as db: # Using transaction
