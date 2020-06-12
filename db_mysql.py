@@ -105,6 +105,7 @@ class DB:
 
 
     def startTransaction(self):
+        self.reconnect()
         self.exec("SET autocommit = OFF")
         self.exec("START TRANSACTION")
 
