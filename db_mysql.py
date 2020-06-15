@@ -5,7 +5,7 @@ class DB:
 
     def __init__(self, connString):
         dic = dict()
-        for m in re.findall(r'[ \t]*([a-zA-Z0-9-]*)[ \t]*=[ \t]*\'([a-zA-Z0-9-+*\/=?!@#$%&()_{}<>:;.~^`" ]*)\'[ \t]*',connString):
+        for m in re.findall(r'[ \t]*([a-zA-Z0-9-]*)[ \t]*=[ \t]*\'([a-zA-Z0-9-+*\/=?!@#$%&()_{}\[\]<>:;.~^`" ]*)\'[ \t]*',connString):
             dic[m[0]] = m[1]
 
         self.conn = mysql.connector.connect(**dic)

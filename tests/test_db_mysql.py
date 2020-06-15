@@ -1,4 +1,4 @@
-from dbpy.tests.config import getConnStr
+from dbpy.tests.connStringCfg import getConnStr
 from dbpy.db_mysql import DB
 
 def test_db_mysql():
