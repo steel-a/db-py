@@ -34,6 +34,8 @@ def test_db_mysql():
         assert lst[1][0]==2
         assert lst[1][1]=='bbb'
 
+        db.exec('drop table if exists test')
+
 
 if __name__ == '__main__':
     test_db_mysql()
