@@ -134,3 +134,24 @@ def f(val):
         return "'"+val+"'"
     else:
         return val
+
+def createFKifNE(db:DB, fkName:str, table:str, column:str, destTable:str, destColumn:str,
+                onUpdateAction:str='CASCADE', onDeleteAction:str='RESTRICT'):
+    return db.exec(f"""
+        IF NOT EXISTS (
+            SELECT NULL 
+            FROM information_schema.TABLE_CONSTRAINTS
+            WHERE
+                CONSTRAINT_SCHEMA = DATABASE() AND
+                CONSTRAINT_NAME   = '{fkName}' AND
+                CONSTRAINT_TYPE   = 'FOREIGN KEY'
+        )
+        THEN
+            ALTER TABLE `{table}` 
+            ADD CONSTRAINT `{fkName}`
+            FOREIGN KEY (`{column}`)
+            REFERENCES `{destTable}` (`{destColumn}`)
+            ON DELETE {onDeleteAction}
+            ON UPDATE {onUpdateAction};
+        END IF
+        """)
