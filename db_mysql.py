@@ -104,6 +104,18 @@ class DB:
         return cursor.rowcount
 
 
+    def tryToExec(self, command:str):
+        '''
+        Try to execute a sql command.
+        Return True if success and False otherwise
+        '''
+        try:
+            self.conn.cursor().execute(command)
+            return True
+        except:
+            return False
+
+
     def startTransaction(self):
         self.reconnect()
         self.exec("SET autocommit = OFF")
