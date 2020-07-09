@@ -147,8 +147,9 @@ def f(val):
     else:
         return val
 
-def createFKifNE(db:DB, fkName:str, table:str, column:str, destTable:str, destColumn:str,
+def createFKifNE(db:DB, table:str, column:str, destTable:str, destColumn:str,
                 onUpdateAction:str='CASCADE', onDeleteAction:str='RESTRICT'):
+    fkName = 'fk_'+table+'_'+column
     return db.exec(f"""
         IF NOT EXISTS (
             SELECT NULL 
