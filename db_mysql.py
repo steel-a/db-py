@@ -91,6 +91,17 @@ class DB:
 
         return dic
 
+    def getValuesSeparatedBy(self, query:str, separator:str) -> dict:
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        
+        string = None
+        for record in cursor.fetchall():
+            if string == None: string = record[0]
+            else: string = string+separator+record[0]
+
+        return string
+
 
     def fetchall(self, query:str) -> list:
         cursor = self.conn.cursor()
