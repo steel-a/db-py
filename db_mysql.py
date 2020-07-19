@@ -1,5 +1,6 @@
 import mysql.connector
 import re
+from io import StringIO
 
 class DB:
 
@@ -101,6 +102,30 @@ class DB:
             else: string = string+separator+record[0]
 
         return string
+
+    def generateCSV(self, query:str, separator:str) -> str:
+        file_str = StringIO()
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        
+        columnNames = cursor.column_names
+
+        for record in cursor.fetchall():
+            for i in range(0,len(columnNames)):
+                field = str(record[i])
+                if separator in field:
+                    field = '"'+field+'"'
+                elif field=='None':
+                    field=''
+
+                if i==0:
+                    file_str.write(field)
+                else:
+                    file_str.write(separator+field)
+            file_str.write('\n')
+
+        return file_str.getvalue()
+
 
 
     def fetchall(self, query:str) -> list:
